@@ -1,22 +1,34 @@
 module DFA
   class Automaton
-    attr_accessor :initial_state,
-                  :transitions
+    attr_accessor :transitions, :states, :initial_state
 
     def initialize(options = {})
-      @initial_state = options[:initial_state]
-      @transitions = options[:transitions]
+      @transitions = options[:transitions] || {}
+      @initial_state = options[:initial_state] || transitions.keys.first
+      @states = {}
+      setup
     end
 
     def minimaze
+      result_expression = ''
       # TODO
+    end
+
+    private
+
+    def setup
+      transitions.each do |name, outgoing_edges|
+        state = State.new(name,
+                          initial: name == initial_state,
+                          outgoing_edges_map: outgoing_edges)
+        states[name] = state
+      end
+
+      states.each do |_, state|
+        state.outgoing_edges_map.each do |key, value|
+          state.add_outgoing_edge(key, states[value])
+        end
+      end
     end
   end
 end
-
-#  dfa = DFA::Automaton.new(initial_state: :q1,
-#                           transitions:
-#                           { q1: { 0 => :q1, 1 => :q2 },
-#                             q2: { 0 => :q1, 1 => :q3 },
-#                             q3: { 0 => :q2, 1 => :q1 }
-#                           })
