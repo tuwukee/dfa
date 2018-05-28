@@ -2,19 +2,20 @@ module DFA
   class State
     attr_accessor :name,
                   :initial,
-                  :edges,
-                  :outgoing_edges_map
+                  :edges
 
     def initialize(name, options = {})
       @name = name
       @initial = options[:initial] || false
-      @outgoing_edges_map = options[:outgoing_edges_map] || {}
-      @edges = { outgoing: [], inbound: [] }
+      @edges = { outbound: [], inbound: [] }
     end
 
-    def add_outgoing_edge(value, end_state)
-      edge = Edge.new(value, self, end_state)
-      edges[:outgoing] << edge
+    def add_outbound(edge)
+      edges[:outbound] << edge
+    end
+
+    def add_inbound(edge)
+      edges[:inbound] << edge
     end
   end
 end

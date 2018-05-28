@@ -8,7 +8,7 @@ module DFA
       @end_state = end_state
     end
 
-    def outgoing?(state)
+    def outbound?(state)
       start_state == state
     end
 

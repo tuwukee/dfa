@@ -17,18 +17,22 @@ module DFA
     private
 
     def setup
-      transitions.each do |name, outgoing_edges|
-        state = State.new(name,
-                          initial: name == initial_state,
-                          outgoing_edges_map: outgoing_edges)
-        states[name] = state
-      end
+      transitions.each do |state_from, edges|
+        from = states[state_from] ||= State.new(state_from, initial: state_from == initial_state)
+        edges.each do |state_to, edge_weight|
+          to = states[state_to] ||= State.new(state_to, initial: state_to == initial_state)
+          edge = Edge.new(edge_weight, from, to)
 
-      states.each do |_, state|
-        state.outgoing_edges_map.each do |key, value|
-          state.add_outgoing_edge(key, states[value])
+          from.add_outbound(edge)
+          to.add_inbound(edge)
         end
       end
     end
   end
 end
+
+#    dfa = DFA::Automaton.new(transitions:
+#                             { q1: { q1: '0', q2: '1' },
+#                               q2: { q1: '0', q3: '1' },
+#                               q3: { q2: '0', q1: '1' }
+#                             })
