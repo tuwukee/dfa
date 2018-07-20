@@ -19,5 +19,9 @@ module DFA
     def self_referenced?
       end_state == start_state
     end
+
+    def grouped_value
+      value.size > 1 ? "(#{value})" : value
+    end
   end
 end
