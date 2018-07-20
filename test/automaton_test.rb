@@ -74,7 +74,7 @@ class AutomatonTest < Minitest::Test
     assert_equal dfa.states[:a].edges[:outbound].first.value, 'xy*z'
   end
 
-  def test_minimaze_divisible_by_5_dfa
+  def test_minimaze_divisible_by_5
     dfa = DFA::Automaton.new(transitions:
                              { q0: { q0: '0', q1: '1' },
                                q1: { q2: '0', q4: '1' },
@@ -84,5 +84,22 @@ class AutomatonTest < Minitest::Test
                              })
     dfa.minimaze!
     assert_equal dfa.states.size, 1
+    assert_equal dfa.states[:q0].edges[:self_referenced].first.value, '0|1(1*0)*(0|1*1)(01*0*1|01*0*0(1*0)*(0|1*1))*1'
+  end
+
+  def test_minimaze_divisible_by_7
+    dfa = DFA::Automaton.new(transitions:
+                             { q0: { q0: '0', q1: '1' },
+                               q1: { q2: '0', q3: '1' },
+                               q2: { q4: '0', q5: '1' },
+                               q3: { q6: '0', q0: '1' },
+                               q4: { q1: '0', q2: '1' },
+                               q5: { q3: '0', q4: '1' },
+                               q6: { q5: '0', q6: '1' }
+                             })
+    dfa.minimaze!
+    assert_equal dfa.states.size, 1
+    binding.pry
+    assert_equal dfa.states[:q0].edges[:self_referenced].first.value, '0|1(1*0)*(0|1*1)(01*0*1|01*0*0(1*0)*(0|1*1))*1'
   end
 end

@@ -18,11 +18,8 @@ module DFA
       return if states_size < 2
 
       while states_size > 1 do
-        # display_dfa
         states_size -= 1
-        current_state = states.delete(transition_keys[states_size])#states.delete(state_name_with_min_edges)
-
-        puts "current_state: #{current_state.name}"
+        current_state = states.delete(state_name_with_min_edges)
 
         if current_state.edges[:self_referenced].any?
           minimaze_with_self_reference(current_state)
@@ -34,20 +31,12 @@ module DFA
 
     private
 
-    def display_dfa
-      puts '=========='
-      puts states.size
-      puts '=========='
-    end
-
     # merge each inbound edge with self_referenced and * by each outbound edge
     def minimaze_with_self_reference(current_state)
       current_state.edges[:inbound].each do |inbound|
         current_state.edges[:self_referenced].each do |self_referenced|
           current_state.edges[:outbound].each do |outbound|
             new_edge_value = "#{inbound.value}#{self_referenced.grouped_value}*#{outbound.grouped_value}"
-
-            puts "new_edge_value: #{new_edge_value}"
 
             replace_states_edges(new_edge_value, inbound, outbound)
           end
@@ -87,9 +76,9 @@ module DFA
       min_edges_key = states[scnd].name
       min_edges_value = states[scnd].edges_count
       states.each do |name, state|
-        next if final_state && (name == final_state || name == initial_state)
+        next if (name == final_state || name == initial_state)
         val = state.edges_count
-        if val < min_edges_value
+        if val <= min_edges_value
           min_edges_value = val
           min_edges_key = name
         end
