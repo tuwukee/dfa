@@ -35,6 +35,18 @@ module DFA
       merge_outbound
     end
 
+    def display_state
+      puts '======'
+      puts name
+      puts "inbound: #{edges[:inbound].size}"
+      puts edges[:inbound].map { |e| "#{e.start_state.name} -> #{e.value} -> #{name}" }.join(', ')
+      puts "outbound: #{edges[:outbound].size}"
+      puts edges[:outbound].map { |e| "#{name} -> #{e.value} -> #{e.end_state.name}" }.join(', ')
+      puts "self_referenced: #{edges[:self_referenced].size}"
+      puts edges[:self_referenced].map { |e| "#{name} -> #{e.value} -> #{name}" }.join(', ')
+      puts '======'
+    end
+
     private
 
     def merge_outbound

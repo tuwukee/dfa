@@ -2,7 +2,7 @@ require 'pry'
 
 module DFA
   class Automaton
-    attr_accessor :transitions, :states, :initial_state, :min_states, :final_state, :transition_keys
+    attr_accessor :transitions, :states, :initial_state, :min_states, :final_state, :transition_keys, :current_state
 
     def initialize(options = {})
       @transitions = options[:transitions] || {}
@@ -16,16 +16,27 @@ module DFA
     def minimaze!
       states_size = final_state ? states.size - 1 : states.size
       return if states_size < 2
+      bind = false
 
       while states_size > 1 do
         states_size -= 1
-        current_state = states.delete(state_name_with_min_edges)
+
+        # states.delete(transition_keys[states_size])#
+
+        @current_state = states.delete(state_name_with_min_edges)
 
         if current_state.edges[:self_referenced].any?
           minimaze_with_self_reference(current_state)
         else
           plain_minimaze(current_state)
         end
+
+        puts '--------------------'
+        puts "all states: #{states.keys.join(', ')}"
+        states.each do |k,v|
+          puts v.display_state
+        end
+        puts '--------------------'
       end
     end
 
@@ -47,7 +58,7 @@ module DFA
     def plain_minimaze(current_state)
       current_state.edges[:inbound].each do |inbound|
         current_state.edges[:outbound].each do |outbound|
-          new_edge_value = "#{inbound.value}*#{outbound.grouped_value}"
+          new_edge_value = "#{inbound.value}#{outbound.grouped_value}"
 
           replace_states_edges(new_edge_value, inbound, outbound)
         end
